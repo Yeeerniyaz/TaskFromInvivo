@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Binary Search Tree</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <script>
+      class Node {
+        constructor(value) {
+          this.value = value;
+          this.left = null;
+          this.right = null;
+        }
+      }
+
+      class BinarySearchTree {
+        constructor() {
+          this.root = null;
+        }
+
+        addNode(value) {
+          const node = new Node(value);
+          if (this.root === null) {
+            this.root = node;
+          } else {
+            this.insertNode(this.root, node);
+          }
+        }
+
+        insertNode(root, node) {
+          if (node.value < root.value) {
+            if (root.left === null) {
+              root.left = node;
+            } else {
+              this.insertNode(root.left, node);
+            }
+          } else {
+            if (root.right === null) {
+              root.right = node;
+            } else {
+              this.insertNode(root.right, node);
+            }
+          }
+        }
+
+        preOrderTraversal(node, callback) {
+          if (node !== null) {
+            callback(node.value);
+            this.preOrderTraversal(node.left, callback);
+            this.preOrderTraversal(node.right, callback);
+          }
+        }
+
+        inOrderTraversal(node, callback) {
+          if (node !== null) {
+            this.inOrderTraversal(node.left, callback);
+            callback(node.value);
+            this.inOrderTraversal(node.right, callback);
+          }
+        }
+
+        postOrderTraversal(node, callback) {
+          if (node !== null) {
+            this.postOrderTraversal(node.left, callback);
+            this.postOrderTraversal(node.right, callback);
+            callback(node.value);
+          }
+        }
+      }
+
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      function drawNode(x, y, value) {
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(value, x, y);
+      }
+
+      function drawTree(node, x, y, level) {
+        if (node !== null) {
+          drawNode(x, y, node.value);
+
+          const xLeft = x - 80 * Math.pow(2, -level);
+          const yLeft = y + 80;
+          const xRight = x + 80 * Math.pow(2, -level);
+          const yRight = y + 80;
+
+          if (node.left !== null) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + 20);
+            ctx.lineTo(xLeft, yLeft - 20);
+            ctx.stroke();
+
+            drawTree(node.left, xLeft, yLeft, level + 1);
+          }
+          if (node.right !== null) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + 20);
+            ctx.lineTo(xRight, yRight - 20);
+            ctx.stroke();
+
+            drawTree(node.right, xRight, yRight, level + 1);
+          }
+        }
+      }
+
+      const binarySearchTree = new BinarySearchTree();
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === " ") {
+          const randomNumber = Math.floor(Math.random() * 201) - 100;
+          binarySearchTree.addNode(randomNumber);
+          drawTree(binarySearchTree.root, canvas.width / 2, 50, 1);
+        }
+      });
+    </script>
+  </body>
+</html>
